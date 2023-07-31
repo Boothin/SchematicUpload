@@ -47,15 +47,38 @@
                             <input required id="file-upload" name="file-upload" type="file" accept=".schem,.schematic"/>
                             <script type="module">
                                 import renderSchematic from './preview/src/webschematics.js';
+                                let file;
 
                                 document.getElementById("file-upload").addEventListener("change", (event) => {
                                     // If the file is a .schem file, render it in the preview
-                                    const file = event.target.files[0];
-                                    if (file.name.endsWith(".schem")) {
+                                    file = event.target.files[0];
+                                    if (document.getElementById("preview-panel").querySelector('canvas') !== null) {
+                                        document.getElementById("preview-panel").querySelector('canvas').remove();
+                                    };
+                                    if (file.name.endsWith(".schem") && document.getElementById('preview').checked) {
                                         // Remove the preview-icon
-                                        document.getElementById("preview-icon").remove();
+                                        document.getElementById("preview-icon").style.visibility = "hidden";
                                         renderSchematic(file, document.getElementById("preview-panel"),
-                                            'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.19.2');
+                                            'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1');
+                                    }
+                                });
+
+                                document.getElementById("preview").addEventListener("change", (event) => {
+                                    // checkbox is being checked
+                                    if (document.getElementById('preview').checked) {
+                                        if (file) {
+                                            if (file.name.endsWith(".schem")) {
+                                                // Remove the preview-icon
+                                                document.getElementById("preview-icon").style.visibility = "hidden";
+                                                renderSchematic(file, document.getElementById("preview-panel"),
+                                                    'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1');
+                                            }
+                                        }
+                                    }
+                                    //else checkbox is being unchecked
+                                    else {
+                                        document.getElementById("preview-panel").querySelector('canvas').remove();
+                                        document.getElementById("preview-icon").style.visibility = "visible";
                                     }
                                 });
                             </script>
@@ -66,6 +89,8 @@
                         </div>
                     </div>
                     <p>Accepted formats: <code>.schem</code>, <code>.schematic</code></p>
+                    <input type="checkbox" id="preview" unchecked /> Preview .schem file
+                    <br />
                     <input type="submit" value="Upload" id="upload-button"/>
                 </form>
                 <div id="preview-panel">
